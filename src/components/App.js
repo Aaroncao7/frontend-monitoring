@@ -6,43 +6,40 @@ import wrenchImg from "../assets/wrench.png";
 import nailsImg from "../assets/nails.png";
 import hammerImg from "../assets/hammer.png";
 
-const request = require('request');
+const request = require("request");
 
-const monify = n => (n / 100).toFixed(2);
-const getUniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
+const monify = (n) => (n / 100).toFixed(2);
+const getUniqueId = () => "_" + Math.random().toString(36).substr(2, 9);
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cart: []
+      cart: [],
     };
 
     // generate random email
-    this.email =
-      Math.random()
-        .toString(36)
-        .substring(2, 6) + "@yahoo.com";
+    this.email = Math.random().toString(36).substring(2, 6) + "@yahoo.com";
 
     this.store = [
       {
         id: "wrench",
         name: "Wrench",
         price: 500,
-        img: wrenchImg
+        img: wrenchImg,
       },
       {
         id: "nails",
         name: "Nails",
         price: 25,
-        img: nailsImg
+        img: nailsImg,
       },
       {
         id: "hammer",
         name: "Hammer",
         price: 1000,
-        img: hammerImg
-      }
+        img: hammerImg,
+      },
     ];
     this.buyItem = this.buyItem.bind(this);
     this.checkout = this.checkout.bind(this);
@@ -51,15 +48,15 @@ class App extends Component {
 
   componentDidMount() {
     const defaultError = window.onerror;
-    window.onerror = error => {
+    window.onerror = (error) => {
       this.setState({ hasError: true, success: false });
       defaultError(error);
     };
     // Add context to error/event
-    Sentry.configureScope(scope => {
-      scope.setUser({ email: this.email }); // attach user/email context
-      scope.setTag("customerType", "medium-plan"); // custom-tag
-    });
+    // Sentry.configureScope(scope => {
+    //   scope.setUser({ email: this.email }); // attach user/email context
+    //   scope.setTag("customerType", "medium-plan"); // custom-tag
+    // });
   }
 
   buyItem(item) {
@@ -67,33 +64,24 @@ class App extends Component {
     cart.push(item);
     console.log(item);
     this.setState({ cart, success: false });
-
-    Sentry.configureScope(scope => {
-      scope.setExtra('cart', JSON.stringify(cart));
-    });
-    Sentry.addBreadcrumb({
-      category: 'cart',
-      message: 'User added ' + item.name + ' to cart',
-      level: 'info'
-    });
   }
 
   resetCart(event) {
     event.preventDefault();
     this.setState({ cart: [], hasError: false, success: false });
 
-    Sentry.configureScope(scope => {
-      scope.setExtra('cart', '');
+    Sentry.configureScope((scope) => {
+      scope.setExtra("cart", "");
     });
     Sentry.addBreadcrumb({
-      category: 'cart',
-      message: 'User emptied cart',
-      level: 'info'
+      category: "cart",
+      message: "User emptied cart",
+      level: "info",
     });
   }
 
   checkout() {
-    this.myCodeIsPerfect();
+    this.test();
 
     /*
       POST request to /checkout endpoint.
@@ -102,30 +90,36 @@ class App extends Component {
     */
     const order = {
       email: this.email,
-      cart: this.state.cart
+      cart: this.state.cart,
     };
 
     // generate unique transactionId and set as Sentry tag
     const transactionId = getUniqueId();
-    Sentry.configureScope(scope => {
+    Sentry.configureScope((scope) => {
       scope.setTag("transaction_id", transactionId);
     });
 
     // perform request (set transctionID as header and throw error appropriately)
-    request.post({
+    request.post(
+      {
         url: "http://localhost:8000/checkout",
         json: order,
         headers: {
-          "X-Transaction-ID": transactionId
-        }
-      }, (error, response) => {
+          "X-Transaction-ID": transactionId,
+        },
+      },
+      (error, response) => {
         if (error) {
           throw error;
         }
         if (response.statusCode === 200) {
           this.setState({ success: true });
         } else {
-          throw new Error(response.statusCode + " - " + (response.statusMessage || response.body));
+          throw new Error(
+            response.statusCode +
+              " - " +
+              (response.statusMessage || response.body)
+          );
         }
       }
     );
@@ -146,7 +140,7 @@ class App extends Component {
           </header>
 
           <div className="inventory">
-            {this.store.map(item => {
+            {this.store.map((item) => {
               const { name, id, img, price } = item;
               return (
                 <div className="item" key={id}>
@@ -170,8 +164,8 @@ class App extends Component {
           <div className="cart">
             {this.state.cart.length ? (
               <div>
-                {Object.keys(cartDisplay).map(id => {
-                  const { name, price } = this.store.find(i => i.id === id);
+                {Object.keys(cartDisplay).map((id) => {
+                  const { name, price } = this.store.find((i) => i.id === id);
                   const qty = cartDisplay[id];
                   return (
                     <div className="cart-item" key={id}>

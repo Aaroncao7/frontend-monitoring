@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -23,15 +24,19 @@
   <title>Sentry Demo</title>
 
   <!-- Import SDK -->
-  <script src="https://browser.sentry-cdn.com/5.15.5/bundle.min.js" crossorigin="anonymous"></script>
+  <!-- <script src="https://browser.sentry-cdn.com/6.16.1/bundle.min.js" crossorigin="anonymous"></script>
 
-  <!-- Configure SDK -->
+  Configure SDK
   <script>
     Sentry.init({
-      dsn: '<PASTE YOUR DSN KEY HERE>'
+      dsn: 'https://2c8b1a58c67041f39f4db5347d666efa@o1124330.ingest.sentry.io/6162626',
+      release: "%REACT_APP_RELEASE_VERSION%",
+      integrations: [new Integrations.BrowserTracing()],
+      tracesSampleRate: 1.0,
+
     });
-  </script>
-<link href="https://fonts.googleapis.com/css?family=Karla:400,700" rel="stylesheet">
+  </script> -->
+  <link href="https://fonts.googleapis.com/css?family=Karla:400,700" rel="stylesheet">
 
 </head>
 
